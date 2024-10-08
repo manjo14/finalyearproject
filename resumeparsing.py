@@ -1,4 +1,4 @@
-import PyMupdf
+import fitz
 import mysql.connector
 import os
 
