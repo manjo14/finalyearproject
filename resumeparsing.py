@@ -58,14 +58,3 @@ def fetch_text_from_database(database_name, table_name, id):
     finally:
         mydb.close()
 
-# Example usage:
-pdf_file_path = "path/to/your/pdf_file.pdf"
-database_name = "your_database_name"
-table_name = "your_table_name"
-
-text = pdf_to_text(pdf_file_path)
-store_text_in_database(text, database_name, table_name)
-
-# Fetch text using the ID of the stored record
-id_to_fetch = 1  # Replace with the desired ID
-fetch_text_from_database(database_name, table_name, id_to_fetch)
