@@ -1,6 +1,5 @@
-import fitz
+import  PyPDF2
 import mysql.connector
-import os
 
 def pdf_to_text(pdf_file):
     """Extracts text from a PDF file using PyMuPDF."""
@@ -21,7 +20,7 @@ def store_text_in_database(text, database_name, table_name):
         )
         mycursor = mydb.cursor()
 
-        sql = "INSERT INTO " + table_name + " (text) VALUES (%s)"
+        sql = f"INSERT INTO {table_name} (text) VALUES (%s)"
         val = (text,)
         mycursor.execute(sql, val)
 
@@ -32,7 +31,7 @@ def store_text_in_database(text, database_name, table_name):
     finally:
         mydb.close()
 
-def fetch_text_from_database(database_name, table_name, id):
+def fetch_text_from_database(database_name, table_name, resume_id):
     """Fetches the stored text from the MySQL database."""
     try:
         mydb = mysql.connector.connect(
@@ -43,18 +42,43 @@ def fetch_text_from_database(database_name, table_name, id):
         )
         mycursor = mydb.cursor()
 
-        sql = "SELECT text FROM " + table_name + " WHERE id = %s"
-        val = (id,)
+        sql = f"SELECT text FROM {table_name} WHERE id = %s"
+        val = (resume_id,)
         mycursor.execute(sql, val)
 
         result = mycursor.fetchone()
         if result:
-            text = result[0]
-            print("Fetched text:", text)
+            return result[0]  # Return the resume text
         else:
-            print("No text found for the given ID.")
+            print("No resume found for the given ID.")
+            return None
     except mysql.connector.Error as error:
         print("Error:", error)
+        return None
     finally:
         mydb.close()
 
+def main():
+    # Path to your PDF file
+    pdf_file = "path/to/your/file.pdf"  # Update this path
+    
+    # Database configuration
+    database_name = "your_database_name"
+    table_name = "your_table_name"
+    
+    # Step 1: Extract text from the PDF
+    extracted_text = pdf_to_text(pdf_file)
+    print("Extracted text from PDF.")
+    
+    # Step 2: Store the extracted text in the database
+    store_text_in_database(extracted_text, database_name, table_name)
+    
+    # Step 3: Fetch the resume from the database (example with id=1)
+    resume_id = 1  # Update as needed
+    resume_text = fetch_text_from_database(database_name, table_name, resume_id)
+    
+    if resume_text:
+        print("Fetched resume text:\n", resume_text)
+
+if __name__ == "__main__":
+    main()
