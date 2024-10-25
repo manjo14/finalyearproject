@@ -2,7 +2,7 @@ import  PyPDF2
 import mysql.connector
 
 def pdf_to_text(pdf_file):
-    """Extracts text from a PDF file using PyMPDF2."""
+    """Extracts text from a PDF file using PyPDF2."""
     text = ""
     with fitz.open(pdf_file) as doc:
         for page in doc:
